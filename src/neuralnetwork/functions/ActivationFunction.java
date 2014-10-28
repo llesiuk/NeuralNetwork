@@ -9,6 +9,8 @@ package neuralnetwork.functions;
  * @author user
  */
 public interface ActivationFunction {
+
     public double value(double arg);
+
     public double derivative(double arg);
 }

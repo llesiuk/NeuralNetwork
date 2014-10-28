@@ -23,8 +23,8 @@ import neuralnetwork.functions.*;
  */
 public class Network {
 
-    private List<Layer> layers;
-    private List<Integer> quantities;
+    private final List<Layer> layers;
+    private final List<Integer> quantities;
     private List<List<Double>> networkInput, expectedValues, testInput, testExpected;
     private int type, epochMax;
     private double learningFactor, momentum;
@@ -92,14 +92,14 @@ public class Network {
             System.out.println("Problem z odczytem pliku.");
         }
     }
-    
+
     public void inputFromFile4(String trainFilename, String testFilename) {
         BufferedReader br;
         String line, currentFolder, newFolder;
         List<Double> oneLine;
         List<List<Double>> wholeInput = null, wholeExpected = null, wholeTestInput = null;
         List<List<Integer>> help = null;
-        int numberOfNetworks = 0, inputSize = 0, currentExpected = 0, outputSize = 5;
+        int numberOfNetworks = 0, inputSize = 0, currentExpected, outputSize = 5;
         this.type = 2;
         try {
             br = new BufferedReader(new FileReader(trainFilename));
@@ -141,7 +141,7 @@ public class Network {
         } catch (IOException iOException) {
             System.out.println("Problem z odczytem pliku.");
         }
-        
+
         try {
             br = new BufferedReader(new FileReader(testFilename));
             wholeTestInput = new ArrayList<List<Double>>();
@@ -182,13 +182,11 @@ public class Network {
         } catch (IOException iOException) {
             System.out.println("Problem z odczytem pliku.");
         }
-        
-            this.networkInput = wholeInput;
-            this.expectedValues = wholeExpected;
-            this.testInput = wholeTestInput;
+
+        this.networkInput = wholeInput;
+        this.expectedValues = wholeExpected;
+        this.testInput = wholeTestInput;
     }
-    
-    
 
     public void inputFromFile3(String trainFilename, String testFilename) {
         BufferedReader br;
@@ -228,7 +226,7 @@ public class Network {
         List<Double> oneLine;
         List<List<Double>> wholeInput = null, wholeExpected = null, wholeTestInput = null;
         List<List<Integer>> help = null;
-        int numberOfNetworks = 0, inputSize = 0;
+        int numberOfNetworks, inputSize;
         this.type = 2;
         try {
             br = new BufferedReader(new FileReader(trainFilename));
@@ -265,7 +263,7 @@ public class Network {
         } catch (IOException iOException) {
             System.out.println("Problem z odczytem pliku.");
         }
-        
+
         try {
             br = new BufferedReader(new FileReader(testFilename));
             wholeTestInput = new ArrayList<List<Double>>();
@@ -301,17 +299,17 @@ public class Network {
         } catch (IOException iOException) {
             System.out.println("Problem z odczytem pliku.");
         }
-        
+
         numberOfNetworks = binomialCoefficient(wholeInput.get(0).size(), this.quantities.get(0));
         inputSize = this.quantities.get(0);
-        if(inputSize == 2) {
+        if (inputSize == 2) {
             help = new ArrayList<List<Integer>>();
             for (int i = 0; i < 6 / 2; i++) {
                 for (int j = 0; j < 6 / 2 - i; j++) {
                     //System.out.println("" + (i) + " " + (j + inputSize + i - 1));
                     help.add(new ArrayList<Integer>());
-                    help.get(help.size()-1).add(i);
-                    help.get(help.size()-1).add(j+inputSize+i-1);
+                    help.get(help.size() - 1).add(i);
+                    help.get(help.size() - 1).add(j + inputSize + i - 1);
                 }
             }
             //System.out.println(help.size());    
@@ -319,32 +317,32 @@ public class Network {
         //System.out.println(numberOfNetworks);        
         currentFolder = "IN" + this.quantities.get(0) + " N" + this.quantities.get(1) + " n" + this.learningFactor + " m" + this.momentum + " e" + this.epochMax;
         new File(currentFolder).mkdir();
-        for(int i = 0; i < numberOfNetworks; i++) {
-            switch(inputSize) {
+        for (int i = 0; i < numberOfNetworks; i++) {
+            switch (inputSize) {
                 case 1:
                     this.networkInput = new ArrayList<List<Double>>();
                     this.expectedValues = new ArrayList<List<Double>>();
                     this.testInput = new ArrayList<List<Double>>();
-                    for(int j = 0; j < wholeInput.size(); j++) {
+                    for (int j = 0; j < wholeInput.size(); j++) {
                         this.networkInput.add(new ArrayList<Double>());
                         this.networkInput.get(j).add(wholeInput.get(j).get(i));
                         this.expectedValues.add(new ArrayList<Double>(wholeExpected.get(j)));
                         this.testInput.add(new ArrayList<Double>());
                         this.testInput.get(j).add(wholeTestInput.get(j).get(i));
-                    }                    
-                    newFolder = currentFolder + "/" + (i+1);
+                    }
+                    newFolder = currentFolder + "/" + (i + 1);
                     new File(newFolder).mkdir();
                     saveNetwork(newFolder + "/before.txt");
                     propagation(newFolder + "/errors.txt");
                     saveNetwork(newFolder + "/after.txt");
                     check(newFolder + "/out.txt");
                     break;
-                    
+
                 case 2:
                     this.networkInput = new ArrayList<List<Double>>();
                     this.expectedValues = new ArrayList<List<Double>>();
                     this.testInput = new ArrayList<List<Double>>();
-                    for(int j = 0; j < wholeInput.size(); j++) {
+                    for (int j = 0; j < wholeInput.size(); j++) {
                         this.networkInput.add(new ArrayList<Double>());
                         //System.out.println(j + " " + help.get(i).get(0) + " " + help.get(i).get(1));
                         this.networkInput.get(j).add(wholeInput.get(j).get(help.get(i).get(0)));
@@ -353,40 +351,40 @@ public class Network {
                         this.testInput.add(new ArrayList<Double>());
                         this.testInput.get(j).add(wholeTestInput.get(j).get(help.get(i).get(0)));
                         this.testInput.get(j).add(wholeTestInput.get(j).get(help.get(i).get(1)));
-                    }                    
-                    newFolder = currentFolder + "/" + (i+1);
+                    }
+                    newFolder = currentFolder + "/" + (i + 1);
                     new File(newFolder).mkdir();
                     saveNetwork(newFolder + "/before.txt");
                     propagation(newFolder + "/errors.txt");
                     saveNetwork(newFolder + "/after.txt");
                     check(newFolder + "/out.txt");
                     break;
-                    
+
                 case 3:
                     this.networkInput = new ArrayList<List<Double>>();
                     this.expectedValues = new ArrayList<List<Double>>();
                     this.testInput = new ArrayList<List<Double>>();
-                    for(int j = 0; j < wholeInput.size(); j++) {
+                    for (int j = 0; j < wholeInput.size(); j++) {
                         this.networkInput.add(new ArrayList<Double>(wholeInput.get(j)));
-                        this.networkInput.get(j).remove(inputSize-i);
+                        this.networkInput.get(j).remove(inputSize - i);
                         this.expectedValues.add(new ArrayList<Double>(wholeExpected.get(j)));
                         this.testInput.add(new ArrayList<Double>(wholeTestInput.get(j)));
-                        this.testInput.get(j).remove(inputSize-i);
+                        this.testInput.get(j).remove(inputSize - i);
                     }
-                    newFolder = currentFolder + "/" + (i+1);
+                    newFolder = currentFolder + "/" + (i + 1);
                     new File(newFolder).mkdir();
                     saveNetwork(newFolder + "/before.txt");
                     propagation(newFolder + "/errors.txt");
                     saveNetwork(newFolder + "/after.txt");
                     check(newFolder + "/out.txt");
                     break;
-                    
+
                 case 4:
                     this.networkInput = wholeInput;
                     this.expectedValues = wholeExpected;
                     this.testInput = wholeTestInput;
                     //this.testExpected = wholeTestExcepted;
-                    newFolder = currentFolder + "/" + (i+1);
+                    newFolder = currentFolder + "/" + (i + 1);
                     new File(newFolder).mkdir();
                     saveNetwork(newFolder + "/before.txt");
                     propagation(newFolder + "/errors.txt");
@@ -395,7 +393,7 @@ public class Network {
                     break;
             }
         }
-        
+
     }
 
     public void inputFromFile1(String trainFilename, String testFilename) {
@@ -482,7 +480,7 @@ public class Network {
     }
 
     public void propagation(String errorFilename) {
-        int epoch = 0, counter1 = 0, counter2 = 0;
+        int epoch = 0, counter1, counter2;
         double rms1, rms2, error;
         try {
             FileWriter fstream = new FileWriter(errorFilename);
@@ -495,36 +493,36 @@ public class Network {
                     //computeOutput();
                 }
                 //if (this.testInput != null && !this.testInput.isEmpty()) {
-                    counter1 = counter2 = 0;
-                    rms1 = rms2 = 0.0;
-                    for(int i = 0; i < this.networkInput.size(); i++) {                        
-                        forwards(i);                        
-                        error = this.layers.get(this.quantities.size() - 1).outputError();
-                        rms1 += error;
-                        if(this.type == 2) {
-                            if(checkTrainOutput(i)){
-                                counter1++;
-                            }
+                counter1 = counter2 = 0;
+                rms1 = rms2 = 0.0;
+                for (int i = 0; i < this.networkInput.size(); i++) {
+                    forwards(i);
+                    error = this.layers.get(this.quantities.size() - 1).outputError();
+                    rms1 += error;
+                    if (this.type == 2) {
+                        if (checkTrainOutput(i)) {
+                            counter1++;
                         }
                     }
-                    out.write(epoch + " " + Math.sqrt(rms1 / (double) (this.networkInput.size() * this.quantities.get(this.quantities.size() - 1))));
-                    if(this.type == 2) {
-                        out.write(" " + (double)counter1 / this.networkInput.size());
-                    }
-                    for (int i = 0; i < this.testInput.size(); i++) {
-                        test(i);
-                        error = this.layers.get(this.quantities.size() - 1).outputError();
-                        rms2 += error;
-                        if(this.type == 2) {
-                            if(checkTestOutput(i)){
-                                counter2++;
-                            }
+                }
+                out.write(epoch + " " + Math.sqrt(rms1 / (double) (this.networkInput.size() * this.quantities.get(this.quantities.size() - 1))));
+                if (this.type == 2) {
+                    out.write(" " + (double) counter1 / this.networkInput.size());
+                }
+                for (int i = 0; i < this.testInput.size(); i++) {
+                    test(i);
+                    error = this.layers.get(this.quantities.size() - 1).outputError();
+                    rms2 += error;
+                    if (this.type == 2) {
+                        if (checkTestOutput(i)) {
+                            counter2++;
                         }
                     }
-                    out.write(" " + Math.sqrt(rms2 / (double) (this.testInput.size() * this.quantities.get(this.quantities.size() - 1))));
-                    if(this.type == 2) {
-                        out.write(" " + (double)counter2 / this.testInput.size());
-                    }
+                }
+                out.write(" " + Math.sqrt(rms2 / (double) (this.testInput.size() * this.quantities.get(this.quantities.size() - 1))));
+                if (this.type == 2) {
+                    out.write(" " + (double) counter2 / this.testInput.size());
+                }
                 //}
                 out.newLine();
                 //System.out.println(errorMax);
@@ -535,21 +533,21 @@ public class Network {
             Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private boolean checkTrainOutput(int index) {
         List<Double> out = this.layers.get(this.quantities.size() - 1).getCompleteOutput();
-        for(int i = 0; i < out.size(); i++) {
-            if(Math.abs(out.get(i) - this.expectedValues.get(index).get(i)) > 0.1) {
+        for (int i = 0; i < out.size(); i++) {
+            if (Math.abs(out.get(i) - this.expectedValues.get(index).get(i)) > 0.1) {
                 return false;
             }
         }
         return true;
     }
-    
+
     private boolean checkTestOutput(int index) {
         List<Double> out = this.layers.get(this.quantities.size() - 1).getCompleteOutput();
-        for(int i = 0; i < out.size(); i++) {
-            if(Math.abs(out.get(i) - this.testExpected.get(index).get(i)) > 0.1) {
+        for (int i = 0; i < out.size(); i++) {
+            if (Math.abs(out.get(i) - this.testExpected.get(index).get(i)) > 0.1) {
                 return false;
             }
         }
@@ -576,22 +574,22 @@ public class Network {
     private List<Double> toList(String weights) {
         ArrayList<Double> result = new ArrayList<Double>();
         String split[] = weights.split(" ");
-        for (int i = 0; i < split.length; i++) {
-            result.add(Double.parseDouble(split[i]));
+        for (String split1 : split) {
+            result.add(Double.parseDouble(split1));
         }
         return result;
     }
-    
+
     private int factorial(int x) {
         int result = 1;
-        for(int i = 1; i <= x; i++) {
+        for (int i = 1; i <= x; i++) {
             result *= i;
         }
         return result;
     }
-    
+
     public int binomialCoefficient(int n, int k) {
-        return factorial(n) / (factorial(k) * factorial(n-k));
+        return factorial(n) / (factorial(k) * factorial(n - k));
     }
 
     public void saveNetwork(String filename) {
@@ -612,13 +610,12 @@ public class Network {
             Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void saveHiddenOutput(String filename) {
-       try {
+        try {
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
-            for (int j = 0; j < this.testInput.size(); j++)
-            {
+            for (int j = 0; j < this.testInput.size(); j++) {
                 test(j);
                 for (int i = 0; i < this.layers.get(1).getNuerons().size(); i++) {
                     out.write("" + this.layers.get(1).getNuerons().get(i).getOutput() + " ");
@@ -628,7 +625,7 @@ public class Network {
             out.close();
         } catch (IOException ex) {
             Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
 
     public void check() {
@@ -648,21 +645,21 @@ public class Network {
             FileWriter fstream = new FileWriter(filename);
             BufferedWriter out = new BufferedWriter(fstream);
             //if (this.testInput != null && !this.testInput.isEmpty()) {
-                for (int i = 0; i < this.testInput.size(); i++) {
-                    //System.out.println(this.networkInput.get(i));
-                    //System.out.println(this.expectedValues.get(i));
-                    setInputFirst(this.testInput.get(i));
-                    computeOutput();
-                    //System.out.println(getNetworkOutput());
-                    //System.out.println();
-                    for(int j = 0; j < this.testInput.get(i).size(); j++) {
-                        out.write(this.testInput.get(i).get(j).toString() + " ");
-                    }
-                    for(int j = 0; j < getNetworkOutput().size(); j++) {
-                       out.write(getNetworkOutput().get(j).toString() + " "); 
-                    }                    
-                    out.newLine();
-                }    
+            for (int i = 0; i < this.testInput.size(); i++) {
+                //System.out.println(this.networkInput.get(i));
+                //System.out.println(this.expectedValues.get(i));
+                setInputFirst(this.testInput.get(i));
+                computeOutput();
+                //System.out.println(getNetworkOutput());
+                //System.out.println();
+                for (int j = 0; j < this.testInput.get(i).size(); j++) {
+                    out.write(this.testInput.get(i).get(j).toString() + " ");
+                }
+                for (int j = 0; j < getNetworkOutput().size(); j++) {
+                    out.write(getNetworkOutput().get(j).toString() + " ");
+                }
+                out.newLine();
+            }
 //            } else {
 //                for (int i = 0; i < this.networkInput.size(); i++) {
 //                    //System.out.println(this.networkInput.get(i));
