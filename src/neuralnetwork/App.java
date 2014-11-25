@@ -257,7 +257,7 @@ public class App {
                     neuralNet.saveNetwork(saveFilename);
                 }
                 if (testingFilename != null) {
-                    neuralNet.check(testingFilename);
+                    neuralNet.check2(testingFilename);
                 }
                 break;
         }

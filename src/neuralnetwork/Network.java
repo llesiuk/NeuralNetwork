@@ -99,7 +99,7 @@ public class Network {
         List<Double> oneLine;
         List<List<Double>> wholeInput = null, wholeExpected = null, wholeTestInput = null;
         List<List<Integer>> help = null;
-        int numberOfNetworks = 0, inputSize = 0, currentExpected, outputSize = 5;
+        int numberOfNetworks = 0, inputSize = 0, currentExpected, outputSize = this.quantities.get(this.quantities.size()-1);
         this.type = 2;
         try {
             br = new BufferedReader(new FileReader(trainFilename));
@@ -677,6 +677,31 @@ public class Network {
 //                    out.newLine();
 //                }
 //            }
+            out.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void check2(String filename) {
+        try {
+            FileWriter fstream = new FileWriter(filename);
+            BufferedWriter out = new BufferedWriter(fstream);
+            double highestNetworkOutputValue;
+            int highestNetworkOutputNumber = 0;
+            for (int i = 0; i < this.testInput.size(); i++) {
+                setInputFirst(this.testInput.get(i));
+                computeOutput();
+                highestNetworkOutputValue = 0.0;
+                for (int j = 0; j < getNetworkOutput().size(); j++) {
+                    if (getNetworkOutput().get(j) > highestNetworkOutputValue) {
+                        highestNetworkOutputValue = getNetworkOutput().get(j);
+                        highestNetworkOutputNumber = j+1;
+                    }
+                }                
+                out.write(highestNetworkOutputNumber + " " + highestNetworkOutputValue);
+                out.newLine();
+            }
             out.close();
         } catch (IOException ex) {
             Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
